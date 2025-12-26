@@ -4,16 +4,14 @@ import { persist } from 'zustand/middleware';
 export const useDashboardStore = create(
   persist(
     (set, get) => ({
-      // State
       widgets: [],
       theme: 'light',
       
-      // Actions
       addWidget: (widget) => {
         const newWidget = {
           ...widget,
           id: `widget-${Date.now()}`,
-          position: { x: 0, y: 0, w: 6, h: 4 }
+          position: widget.position || { x: 0, y: 0, w: 6, h: 4 }
         };
         set((state) => ({
           widgets: [...state.widgets, newWidget]
@@ -45,7 +43,6 @@ export const useDashboardStore = create(
       toggleTheme: () => {
         set((state) => {
           const newTheme = state.theme === 'light' ? 'dark' : 'light';
-          // Update document class
           if (typeof document !== 'undefined') {
             document.documentElement.classList.toggle('dark', newTheme === 'dark');
           }
@@ -55,6 +52,29 @@ export const useDashboardStore = create(
       
       clearAllWidgets: () => {
         set({ widgets: [] });
+      },
+      
+      // New: Load template
+      loadTemplate: (template) => {
+        const widgets = template.widgets.map((widget, index) => ({
+          ...widget,
+          id: `widget-${Date.now()}-${index}`
+        }));
+        set({ widgets });
+      },
+      
+      // New: Import configuration
+      importConfiguration: (config) => {
+        if (config.widgets) {
+          const widgets = config.widgets.map((widget, index) => ({
+            ...widget,
+            id: `widget-${Date.now()}-${index}`
+          }));
+          set({ widgets });
+        }
+        if (config.theme) {
+          set({ theme: config.theme });
+        }
       }
     }),
     {
