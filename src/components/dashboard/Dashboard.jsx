@@ -200,7 +200,7 @@ export default function Dashboard() {
         )}
       </main>
 
-       <Footer/>
+      <Footer/>
       {/* Dialogs */}
       <AddWidgetDialog
         open={isAddDialogOpen}
